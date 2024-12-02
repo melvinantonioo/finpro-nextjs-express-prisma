@@ -9,21 +9,19 @@ import path from 'path'
 import Handlebars from 'handlebars';
 import fs from 'fs'; //filesystem
 
-// const prisma = new PrismaClient();
 
-// Fungsi untuk generate referral code
+
 const generateReferralCode = (name: string): string => {
     const randomNumber = Math.floor(1000 + Math.random() * 9000); // 4 digit angka acak
     return `${name.toUpperCase()}${randomNumber}`;
 };
 
 export const registerUserReff = async (req: Request, res: Response) => {
-    //gunakan path untuk baca direktori kita , __dirname membaca folder kita dari D - minpro-v1
+
     const templatePath = path.join(
         __dirname,
         "../templates/",
         "register.hbs"
-        //hbs untuk handle Bars, bisa kirim expressions logic ke html kita 
     )
     const templateSource = fs.readFileSync(templatePath, "utf-8");
     const compiledTemplate = Handlebars.compile(templateSource);
@@ -39,14 +37,11 @@ export const registerUserReff = async (req: Request, res: Response) => {
             return;
         }
 
-        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Generate referral code untuk user baru
         const generatedReferralCode = generateReferralCode(name);
 
-        //tambahkan proses emailer, kasih expression untuk html kita 
         const html = compiledTemplate({ name, emailUser: email });
 
 
@@ -71,9 +66,9 @@ export const registerUserReff = async (req: Request, res: Response) => {
                 //langsung pasang sesuai variable kita 
             })
 
-            let discountVoucher = null; // Inisialisasi variabel untuk menyimpan voucher
+            let discountVoucher = null; 
 
-            // Jika referral code diberikan
+           
             if (referralCode) {
                 // Validasi referral code
                 const referrer = await tx.user.findUnique({
@@ -180,11 +175,11 @@ export const loginUser = async (req: Request, res: Response) => {
         // Generate JWT - only include essential, non-sensitive data
         const token = jwt.sign(
             {
-                id: user.id,         //ganti userID to id 
+                id: user.id,         
                 role: user.role,
                 email: user.email,
-                name: user.name    //coba tambah payload nama
-            },    // kita gabikin fields name , jadi ga muncul di front End 
+                name: user.name    
+            },    
             process.env.SECRET_KEY as string,
             { expiresIn: '1h' }
         );
@@ -193,7 +188,7 @@ export const loginUser = async (req: Request, res: Response) => {
         //     secure: process.env.NODE_ENV === 'production',a
         //         sameSite: 'strict',
 
-        res.status(200) //Pembuatan Token Seperti Ini Aja , Kalau Tambah security unre
+        res.status(200) 
             .cookie("access_token", token, {
 
                 maxAge: 3600000 // 1 hourd

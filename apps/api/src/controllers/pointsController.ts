@@ -53,7 +53,7 @@ export const getUserPointsUser = async (req: Request, res: Response) => {
 
 export const getReferralCode = async (req: Request, res: Response) => {
     try {
-        // Pastikan pengguna telah diautentikasi dan ID pengguna tersedia di `req.user`
+        
         if (!req.user) {
             res.status(401).json({ message: "Unauthorized" });
             return;
@@ -65,13 +65,11 @@ export const getReferralCode = async (req: Request, res: Response) => {
             select: { referralCode: true },
         });
 
-        // Jika pengguna tidak ditemukan
         if (!user) {
             res.status(404).json({ message: "User not found" });
             return;
         }
 
-        // Kirim referral code ke frontend
         res.status(200).json({
             message: "Referral code retrieved successfully",
             referralCode: user.referralCode,

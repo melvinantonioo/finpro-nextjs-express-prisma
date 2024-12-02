@@ -1,20 +1,13 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
-
-// import * as DateFnsTz from "date-fns-tz";
-// console.log(DateFnsTz);
-
 import { startOfDay, endOfDay } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { add } from "date-fns";
 import { User } from "../custom";
 import { Prisma } from "@prisma/client";
-
 import { parseISO } from 'date-fns';
 
-/**
- * Get all events or search/filter events
- */
+
 export const getEvents = async (req: Request, res: Response) => {
     const { search, filterType, selectedDate } = req.query;
 
@@ -50,9 +43,7 @@ export const getEvents = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Get a single event by ID
- */
+
 export const getEventById = async (req: Request, res: Response) => {
     const { id } = req.params;
 
@@ -72,9 +63,7 @@ export const getEventById = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Create a new event
- */
+
 export const createEvent = async (req: Request, res: Response) => {
     const { name, description, price, date, time, location, capacity, organizerId, type } = req.body;
 
@@ -101,9 +90,7 @@ export const createEvent = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Update an event by ID
- */
+
 export const updateEvent = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { id: organizerId } = req.user as User;
@@ -152,9 +139,7 @@ export const updateEvent = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Delete an event by ID
- */
+
 export const deleteEvent = async (req: Request, res: Response) => {
     const { id } = req.params;
     console.log(`id event : ${id}`)

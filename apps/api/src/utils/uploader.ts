@@ -40,7 +40,5 @@ export const SingleUploader = (filePrefix: string, folderName?: string) => {
             cb(null, newFileName);
         },
     });
-    //nama dari single(), NANTI AKAN SESUAI DENGAN folder yang kita buat di dalam folder public
-    //single("file") , "file" akan menjadi key di dalam body form data 
     return multer({ storage: storage, limits: { fileSize: maxSize } }).single("file")
 }

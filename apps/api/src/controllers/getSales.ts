@@ -9,8 +9,9 @@ export const getSalesData = async (req: Request, res: Response) => {
     const organizerId = req.user!.id; 
     const { timeRange = "monthly" } = req.query; 
 
+
+
     try {
-      
         let startDate: Date;
         const today = new Date();
 
@@ -22,33 +23,39 @@ export const getSalesData = async (req: Request, res: Response) => {
                 startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
                 break;
             case "monthly":
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                break;
+            case "yearly":
+                startDate = new Date(today.getFullYear(), 0, 1);
+                break;
             default:
                 startDate = new Date(today.getFullYear(), today.getMonth(), 1);
                 break;
         }
 
+        // Query untuk mendapatkan data penjualan
         const salesData = await prisma.order.groupBy({
-            by: ["createdAt"], 
+            by: ["createdAt"], // Group berdasarkan tanggal
             _sum: {
-                totalPrice: true, 
+                totalPrice: true, // Hitung total penjualan
             },
             where: {
                 event: {
-                    organizerId, 
+                    organizerId, // Hanya event yang dibuat oleh organizer ini
                 },
                 createdAt: {
-                    gte: startDate, 
+                    gte: startDate, // Tanggal mulai dari rentang waktu
                 },
-                status: "COMPLETED", 
+                status: "COMPLETED", // Hanya order dengan status "COMPLETED"
             },
             orderBy: {
-                createdAt: "asc", 
+                createdAt: "asc", // Urutkan berdasarkan tanggal
             },
         });
 
         // Format data untuk dikembalikan ke frontend
         const formattedData = salesData.map((item) => ({
-            date: item.createdAt.toISOString().split("T")[0], 
+            date: item.createdAt.toISOString().split("T")[0], // Format tanggal
             totalSales: item._sum.totalPrice || 0,
         }));
 

@@ -18,8 +18,8 @@ export const createOrUpdateOrganizer = async (req: Request, res: Response) => {
             where: { id: parseInt(userId) },
             data: {
                 name,
-                photo: logoUrl || undefined, // Update logo hanya jika ada file baru
-                role: "ORGANIZER", // Pastikan role diset ke ORGANIZER
+                photo: logoUrl || undefined, 
+                role: "ORGANIZER", 
             },
         });
 

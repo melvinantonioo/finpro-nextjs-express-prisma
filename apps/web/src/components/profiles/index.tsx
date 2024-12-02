@@ -13,7 +13,7 @@ interface IUserFetch {
     profilePicture?: string
 };
 
-const ProfilePage = () => {
+const ProfilePageComponent = () => {
     const { user } = useAuthStore();
     const [points, setPoints] = useState<number>(0);
     const [vouchers, setVouchers] = useState([]);
@@ -63,4 +63,4 @@ const ProfilePage = () => {
     );
 };
 
-export default ProfilePage;
+export default ProfilePageComponent;

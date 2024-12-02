@@ -1,11 +1,12 @@
-import ProfilePage from '@/app/profiles/page'
+
+import ProfilePageComponent from '@/components/profiles'
 import { HomeLayouts } from '@/layouts/homeLayouts'
 import React from 'react'
 
 export default function ProfileView() {
     return (
         <HomeLayouts>
-            <ProfilePage />
+            <ProfilePageComponent />
         </HomeLayouts>
     )
 }

@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
 import { User } from '../custom';
-import { sub } from "date-fns"; // Library untuk manipulasi tanggal
+import { sub } from "date-fns"; 
 
-/**
- * Get all events created by the authenticated organizer.
- */
+
 export const getOrganizerEvents = async (req: Request, res: Response) => {
     const { id: organizerId } = req.user as User; // Authenticated organizer ID
 
@@ -37,9 +35,7 @@ export const getOrganizerEvents = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Get attendees for a specific event.
- */
+
 export const getEventAttendees = async (req: Request, res: Response) => {
     const { eventId } = req.params;
     const { search, dateRange } = req.query;
@@ -69,9 +65,7 @@ export const getEventAttendees = async (req: Request, res: Response) => {
     }
 };
 
-/**
- * Get Semua Transaction , Untuk Order Management 
- */
+
 export const getEventTransactions = async (req: Request, res: Response) => {
     const { id: organizerId } = req.user as User;
     const { page = 1, limit = 10 } = req.query; // Ambil parameter page dan limit
@@ -155,9 +149,7 @@ export const getEventTransactions = async (req: Request, res: Response) => {
 };
 
 
-/**
- * Get event statistics (total attendees, revenue) for a specific event.
- */
+
 export const getEventStatistics = async (req: Request, res: Response) => {
     const { eventId } = req.params;
 

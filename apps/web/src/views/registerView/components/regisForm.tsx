@@ -11,7 +11,7 @@ export default function RegisterForm2() {
 
     const register = async (params: IRegister) => {
         try {
-            const { data } = await axiosInstance.post("/auth/register", params);
+            const { data } = await axiosInstance.post("/auth/regis", params);
            
             Swal.fire({
                 icon: "success",
