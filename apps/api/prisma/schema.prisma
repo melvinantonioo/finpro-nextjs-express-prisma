@@ -10,6 +10,199 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Transaction {
-  id Int @id @default(autoincrement())
+
+model sample {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  code String
 }
+model User {
+  id                Int                @id @default(autoincrement())
+  name              String             @db.VarChar(20) 
+  email             String             @unique     
+  password          String                          
+  role              Role                                    
+  referralCode      String             @unique                  
+  points            Int                @default(0)   
+  referrals         Referral[]                      
+  orders            Order[]                                 
+  reviews           Review[]
+  createdEvents     Event[]            @relation("CreatedEvents")
+  referralsGiven    Referral[]         @relation("UserReferralsGiven")     
+  referralsReceived Referral[]         @relation("UserReferralsReceived")   
+  pointTransactions PointTransaction[]                                     
+  transactions      Transaction[]                           
+  vouchers Voucher[] 
+  photo             String?     
+}
+
+model Voucher {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique  
+  discount    Float    
+  user        User?    @relation(fields: [userId], references: [id]) 
+  userId      Int?
+  isUsed      Boolean  @default(false) 
+  expiresAt   DateTime                 
+  createdAt   DateTime @default(now()) 
+}
+
+
+enum Role {  
+  ATTENDEE
+  ORGANIZER 
+}
+
+model Event {
+  id             Int             @id @default(autoincrement())
+  name           String          @db.VarChar(20)
+  description    String          @db.VarChar(50)
+  price          Float
+  date           DateTime     
+  time           DateTime
+  location       String
+  capacity       Int
+  availableSeats Int 
+  type           EventType          
+  organizer      User            @relation("CreatedEvents", fields: [organizerId], references: [id])
+  organizerId    Int
+  tickets        Ticket[]           
+  orders         Order[]            
+  reviews        Review[]           
+  promotions     Promotion[]        
+
+  categories     EventCategory[]     
+  transactions   Transaction[]       
+  image          String?
+}
+
+enum EventType { 
+  FREE
+  PAID
+}
+
+model Ticket {
+  id         Int         @id @default(autoincrement())
+  event      Event       @relation(fields: [eventId], references: [id],  onDelete: Cascade)
+  eventId    Int          
+  type       String
+  price      Float
+  quantity   Int
+ 
+  orderItems OrderItem[]
+}
+
+model Order {
+  id          Int           @id @default(autoincrement())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      Int
+  event       Event         @relation(fields: [eventId], references: [id],   onDelete: Cascade)
+  eventId     Int
+  ticketQty   Int
+  totalPrice  Float
+  status      OrderStatus                   
+  createdAt   DateTime      @default(now())
+  Transaction Transaction[]
+  OrderItem   OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model Referral {
+  id             Int      @id @default(autoincrement())
+  
+  referrer       User     @relation("UserReferralsGiven", fields: [referrerId], references: [id])
+  referrerId     Int
+  referredUser   User     @relation("UserReferralsReceived", fields: [referredUserId], references: [id])
+  referredUserId Int
+  pointsEarned   Int      @default(0)
+  expiresAt      DateTime
+  User           User?    @relation(fields: [userId], references: [id])
+  userId         Int?
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  attendee  User     @relation(fields: [userId], references: [id])
+  userId    Int
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+}
+
+model Promotion {
+  id           Int      @id @default(autoincrement())
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId      Int
+  code         String   @unique
+  discountRate Float
+  validUntil   DateTime
+  // Ditambahkan:
+  maxUses      Int      
+  currentUses  Int      @default(0)
+}
+
+model PointTransaction {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  points    Int
+  expiresAt DateTime
+  reason    String
+  createdAt DateTime @default(now()) 
+    proofImage    String?       
+}
+
+  model OrderItem {
+    id       Int    @id @default(autoincrement())
+    order    Order  @relation(fields: [orderId], references: [id])
+    orderId  Int
+    ticket   Ticket @relation(fields: [ticketId], references: [id])
+    ticketId Int
+    quantity Int
+    price    Float
+  }
+
+  model Transaction {
+    id            Int           @id @default(autoincrement())
+    user          User          @relation(fields: [userId], references: [id])
+    userId        Int
+    event         Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    eventId       Int
+    order         Order         @relation(fields: [orderId], references: [id])
+    orderId       Int
+    amount        Float
+    paymentMethod String
+    status        PaymentStatus
+    createdAt     DateTime      @default(now())
+     proofImage    String?      
+  }
+
+  enum PaymentStatus {
+    PENDING
+    COMPLETED
+    FAILED
+  }
+
+  model EventCategory {
+    event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    eventId    Int
+    category   Category @relation(fields: [categoryId], references: [id])
+    categoryId Int
+
+    @@id([eventId, categoryId])
+  }
+
+  model Category { 
+    id     Int             @id @default(autoincrement())
+    name   String          @unique
+    events EventCategory[]
+  }
+
