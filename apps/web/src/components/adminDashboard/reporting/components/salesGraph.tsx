@@ -27,7 +27,7 @@ interface SalesGraphProps {
 }
 
 const SalesGraph: React.FC<SalesGraphProps> = ({ salesData }) => {
-    // Transform the sales data into Chart.js-compatible format
+
     const labels = salesData.map((item) => item.date); // Dates
     const dataValues = salesData.map((item) => item.totalSales); // Sales amounts
 

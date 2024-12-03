@@ -23,7 +23,7 @@ export default function AuthProvider({
     const access_token = getCookie("access_token") || "";
 
     const checkLogin = async () => {
-        const token: Token = jwtDecode(access_token as string);// Solved
+        const token: Token = jwtDecode(access_token as string);
 
         if (Date.now() >= token.exp * 1000) {
             Swal.fire({

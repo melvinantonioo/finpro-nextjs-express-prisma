@@ -27,5 +27,3 @@ const OrderSectionManagement: React.FC = () => {
 
 export default OrderSectionManagement;
 
-//munculin , nama dan email pembelinya , dan order numbernya
-//Optimize , Debounce Pencaharian , Input Bar , dan Time Range 

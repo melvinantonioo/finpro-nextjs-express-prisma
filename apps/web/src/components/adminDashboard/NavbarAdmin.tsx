@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
     };
 
     const handleLogout = () => {
-        clearAuth(); // Set state `user` menjadi null dan hapus token dari cookie
+        clearAuth(); 
         router.push("/");
     };
 
@@ -45,14 +45,6 @@ const Navbar: React.FC = () => {
                 {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
 
-            {/* Menu Items
-            <div className={`md:flex items-center space-x-4 ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
-                <Link href="/admin">Home</Link>
-                <Link href="/admin/events">Events</Link>
-                <Link href="/admin/orders">Orders</Link>
-                <Link href="/admin/reporting">Reporting</Link>
-                <Link href="/admin/settings">Settings</Link>
-            </div> */}
 
             {/* Account Menu */}
             <div className="relative">
@@ -77,10 +69,6 @@ const Navbar: React.FC = () => {
                             Account Settings
                         </Link>
                         <div className="border-t border-gray-200"></div>
-                        {/* <Link href="/logout" className="block px-4 py-2 text-sm hover:bg-gray-100">
-                            Log out
-                            <p className="text-xs text-gray-500">bonk43926@gmail.com</p>
-                        </Link> */}
                         <button
                             onClick={handleLogout}
                             className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"

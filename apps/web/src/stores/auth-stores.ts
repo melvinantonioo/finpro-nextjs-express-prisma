@@ -19,12 +19,11 @@ const useAuthStore = create<IAuthStore>((set) => ({
     user: null,  
     onAuthSuccess: (payload) => set(() => ({ user: payload })),
 
-    clearAuth: () => { //kemudian ini akan set user menjadi null lagi , setelah logout
+    clearAuth: () => { 
         set(() => ({ user: null }));
-        deleteCookie("access_token"); //delete token dari cookie 
+        deleteCookie("access_token"); 
     },
 }));
 
-//state ini sementara , yang membuat data nya muncul terus , karnna token nya di decode lagi dan dimasukan lagi ke client, dengan bantuan <AuthProvider>
 
 export default useAuthStore;

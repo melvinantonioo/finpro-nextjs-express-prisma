@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "@/lib/axiosInstance";
+import Swal from "sweetalert2";
 
 interface EventFormProps {
     initialData?: any; 
@@ -47,15 +48,18 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onClose, onSave }) =
             if (initialData) {
                 // Edit event
                 await axiosInstance.put(`/api/dashboard/${initialData.id}`, eventData);
+                Swal.fire("Sukses!", "Event berhasil diperbarui.", "success");
             } else {
                 // Create event
                 await axiosInstance.post("/api/dashboard/events", eventData);
+                Swal.fire("Sukses!", "Event berhasil ditambahkan.", "success");
             }
 
             onSave();
             onClose();
         } catch (error) {
             console.error("Error saving event:", error);
+            Swal.fire("Terjadi kesalahan", "Gagal menyimpan event", "error");
         }
     };
 
@@ -76,13 +80,7 @@ const EventForm: React.FC<EventFormProps> = ({ initialData, onClose, onSave }) =
                 className="w-full p-2 border border-gray-300 rounded-lg"
                 required
             />
-            {/* <input
-                type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-lg"
-                required
-            /> */}
+
             <input
                 type="text"
                 placeholder="Lokasi"

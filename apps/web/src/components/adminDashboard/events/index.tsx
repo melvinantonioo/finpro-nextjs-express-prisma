@@ -11,6 +11,7 @@ import EventForm from "../events/components/editForm";
 import debounce from "lodash/debounce";
 import { format } from "date-fns";
 import useAuthStore from "@/stores/auth-stores";
+import Swal from "sweetalert2";
 
 interface Event {
     id: string;
@@ -65,13 +66,35 @@ const EventsFilter: React.FC = () => {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        try {
-            await axiosInstance.delete(`/api/dashboard/${id}`);
-            fetchEvents();
-        } catch (error) {
-            console.error("Error deleting event:", error);
-        }
+    // const handleDelete = async (id: string) => {
+    //     try {
+    //         await axiosInstance.delete(`/api/dashboard/${id}`);
+    //         fetchEvents();
+    //     } catch (error) {
+    //         console.error("Error deleting event:", error);
+    //     }
+    // };
+
+    const handleDelete = (id: string) => {
+        Swal.fire({
+            title: "Apakah Anda yakin?",
+            text: "Anda tidak akan bisa mengembalikan event ini setelah dihapus!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Hapus",
+            cancelButtonText: "Batal",
+            reverseButtons: true,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axiosInstance.delete(`/api/dashboard/${id}`);
+                    fetchEvents();
+                    Swal.fire("Dihapus!", "Event berhasil dihapus.", "success");
+                } catch (error) {
+                    Swal.fire("Terjadi kesalahan", "Gagal menghapus event", "error");
+                }
+            }
+        });
     };
 
     const handleSearch = debounce((value: string) => {
@@ -178,10 +201,6 @@ const EventsFilter: React.FC = () => {
                                 <p className="text-sm text-gray-500">Lokasi: {event.location}</p>
                                 <p className="text-sm text-gray-500">Sisa Kursi: {event.availableSeats}</p>
                             </div>
-
-                            <button onClick={() => { setShowForm(true); setSelectedEvent(null); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg mb-4">
-                                Tambah Event
-                            </button>
 
                             <div className="flex justify-end gap-2">
                                 <button onClick={() => { setShowForm(true); setSelectedEvent(event); }} className="px-4 py-2 bg-yellow-500 text-white rounded-lg">Edit</button>

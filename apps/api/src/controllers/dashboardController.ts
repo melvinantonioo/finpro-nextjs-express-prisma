@@ -5,8 +5,7 @@ import { sub } from "date-fns";
 
 
 export const getOrganizerEvents = async (req: Request, res: Response) => {
-    const { id: organizerId } = req.user as User; // Authenticated organizer ID
-    console.log("Organizer ID from request:", organizerId);  // Log to verify organizerId
+    const { id: organizerId } = req.user as User; 
 
     try {
         // Log query just before making the request

@@ -14,7 +14,7 @@ export const getUserPointsUser = async (req: Request, res: Response) => {
         const user = await prisma.user.findUnique({
             where: { id: req.user.id },
             select: {
-                points: true, // Mengambil hanya poin user
+                points: true, 
                 pointTransactions: {
                     select: {
                         points: true,
