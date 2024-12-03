@@ -5,7 +5,7 @@ import useAuthStore from '@/stores/auth-stores';
 
 
 const AdminHome: React.FC = () => {
-    const { user, clearAuth } = useAuthStore(); //zustand
+    const { user, clearAuth } = useAuthStore(); 
     return (
         <div>
             <h1 className="text-3xl font-bold mb-6">Hi-hello,{user?.name} </h1>

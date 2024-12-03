@@ -8,6 +8,7 @@ const DashboardGraph: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     const [timeRange, setTimeRange] = useState("monthly"); // Default timeRange 
+    const [totalSales, setTotalSales] = useState<number>(0);
 
     // Fetch sales data on mount
     useEffect(() => {
@@ -18,6 +19,7 @@ const DashboardGraph: React.FC = () => {
                 });
                 if (response.data.success) {
                     setSalesData(response.data.data);
+                    setTotalSales(response.data.totalSales); // Update total sales
                 }
             } catch (error) {
                 console.error("Failed to fetch sales data:", error);
@@ -28,6 +30,9 @@ const DashboardGraph: React.FC = () => {
 
         fetchSalesData(timeRange);
     }, [timeRange]);
+
+    // Menghitung total penjualan berdasarkan rentang waktu yang dipilih
+    const totalSalesByTimeRange = salesData.reduce((acc, item) => acc + item.totalSales, 0);
 
     return (
         <div className="min-h-screen bg-gray-100 p-6">
@@ -49,6 +54,40 @@ const DashboardGraph: React.FC = () => {
                     <option value="monthly">Bulanan</option>
                     <option value="yearly">Tahunan</option> 
                 </select>
+            </div>
+
+            {/* Label Total Penjualan */}
+            <div className="flex justify-between mb-6">
+                <div className="p-4 bg-white shadow rounded-md w-1/3">
+                    <h2 className="font-semibold text-gray-700">Total Penjualan Keseluruhan</h2>
+                    <p className="text-xl">{totalSales ? totalSales.toLocaleString() : "Loading..."}</p>
+                </div>
+
+                {/* Label Penjualan Berdasarkan Rentang Waktu */}
+
+                <div className="p-4 bg-white shadow rounded-md w-1/3">
+                    <h2 className="font-semibold text-gray-700">Penjualan Berdasarkan {timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}</h2>
+                    <ul className="text-xl">
+                        {salesData.length > 0 ? (
+                            salesData.map((item, index) => (
+                                <li key={index}>
+                                    <strong>{item.date}</strong>: {item.totalSales.toLocaleString()}
+                                </li>
+                            ))
+                        ) : (
+                            <p>Data tidak tersedia</p>
+                        )}
+                    </ul>
+                </div>
+
+
+            </div>
+            {/* Label Total Penjualan Berdasarkan Rentang Waktu */}
+            <div className="p-4 bg-white shadow rounded-md w-1/3 mb-2">
+                <h2 className="font-semibold text-gray-700">
+                    Total Penjualan {timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
+                </h2>
+                <p className="text-xl">{totalSalesByTimeRange ? totalSalesByTimeRange.toLocaleString() : "Loading..."}</p>
             </div>
 
             {/* Show Graph or Loading */}

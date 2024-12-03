@@ -6,13 +6,13 @@ import { Request, Response } from "express";
 
 const router = express.Router();
 
-router.get('/userpoints', VerifyToken2, getUserPointsUser);  //use this
+router.get('/userpoints', VerifyToken2, getUserPointsUser);  
 
-router.get('/refferal', VerifyToken2, getReferralCode)  //reff
+router.get('/refferal', VerifyToken2, getReferralCode)  
 
-router.get("/vouchers", VerifyToken2, async (req: Request, res: Response) => {   //voucher get
+router.get("/vouchers", VerifyToken2, async (req: Request, res: Response) => {   
     try {
-        if (!req.user) {    //Kasih Validasi agar tidak error ( validasi ini wajib ,  untuk membantu middleware)
+        if (!req.user) {    
             res.status(401).json({ message: 'User not authenticated' });
             return;
         }

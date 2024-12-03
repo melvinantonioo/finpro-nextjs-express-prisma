@@ -39,7 +39,7 @@ const ProfilePageComponent = () => {
                 const { data: userRefferal } = await axiosInstance.get("/point/refferal");
                 console.log("Referral Code API Response:", userRefferal.referralCode);
                 setRefferal(userRefferal.referralCode)
-                // console.log(`Refferal`, userRefferal);
+
 
             } catch (error) {
                 console.error("Error fetching profile data:", error);
@@ -50,7 +50,7 @@ const ProfilePageComponent = () => {
     }, [user]);
 
     if (!user) {
-        // Jika user null, tampilkan placeholder atau redirect ke login
+
         return <p className="text-center">Loading profile...</p>;
     }
 

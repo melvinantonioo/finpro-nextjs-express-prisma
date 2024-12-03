@@ -1,7 +1,7 @@
 "use client"
 import { motion } from 'framer-motion';
 import { FaPlus } from 'react-icons/fa';
-import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
+import { useRouter } from 'next/navigation'; 
 
 interface CardItemProps {
     title: string;
@@ -11,16 +11,16 @@ interface CardItemProps {
 }
 
 const CardItem: React.FC<CardItemProps> = ({ title, description, imageSrc, link }) => {
-    const router = useRouter(); // Initialize router
+    const router = useRouter(); 
 
     const handleNavigation = () => {
-        router.push(link); // Navigate to the specified link
+        router.push(link); 
     };
     return (
         <motion.div
             whileHover={{ scale: 1.05, boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)' }}
             className="flex flex-col border border-gray-300 rounded-lg shadow-sm overflow-hidden bg-white transition-all duration-300"
-            onClick={handleNavigation} // Handle click to navigate
+            onClick={handleNavigation} 
         >
             <div className="flex-grow">
                 <img src={imageSrc} alt={title} className="w-full h-40 object-cover" />
@@ -39,4 +39,3 @@ const CardItem: React.FC<CardItemProps> = ({ title, description, imageSrc, link 
 };
 
 export default CardItem;
-//Additions to add the Navigate To Create Event 

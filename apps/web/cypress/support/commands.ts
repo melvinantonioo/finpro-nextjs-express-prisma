@@ -9,9 +9,20 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 //
-//
+// declare global {
+//     namespace Cypress {
+//         interface Chainable {
+//             login(email: string, password: string): Chainable<any>;
+//         }
+//     }
+// }
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+// Cypress.Commands.add('login', (email: string, password: string) => {
+//     cy.visit("/login");
+//     cy.get('input[name="email"]').type(email);
+//     cy.get('input[name="password"]').type(password);
+//     cy.get('form').submit();
+// })
 //
 //
 // -- This is a child command --
@@ -35,3 +46,11 @@
 //     }
 //   }
 // }
+
+// Setup untuk custom command login
+// Cypress.Commands.add("login", (email, password) => {
+//     cy.visit("/login");
+//     cy.get('input[name="email"]').type(email);
+//     cy.get('input[name="password"]').type(password);
+//     cy.get('form').submit();
+// });

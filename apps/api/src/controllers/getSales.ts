@@ -2,19 +2,16 @@ import { Request, Response } from "express";
 import prisma from "../prisma";
 import { User } from "@prisma/client";
 
-/**
- * Controller untuk mendapatkan data penjualan
- */
+
 export const getSalesData = async (req: Request, res: Response) => {
-    const organizerId = req.user!.id; 
-    const { timeRange = "monthly" } = req.query; 
-
-
+    const organizerId = req.user!.id;
+    const { timeRange = "monthly" } = req.query;
 
     try {
         let startDate: Date;
         const today = new Date();
 
+        // Tentukan tanggal mulai berdasarkan waktu yang dipilih
         switch (timeRange) {
             case "daily":
                 startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -33,39 +30,50 @@ export const getSalesData = async (req: Request, res: Response) => {
                 break;
         }
 
-        // Query untuk mendapatkan data penjualan
+        // Query untuk mendapatkan data penjualan berdasarkan rentang waktu yang dipilih
         const salesData = await prisma.order.groupBy({
-            by: ["createdAt"], // Group berdasarkan tanggal
+            by: ["createdAt"], 
             _sum: {
-                totalPrice: true, // Hitung total penjualan
+                totalPrice: true, 
             },
             where: {
                 event: {
-                    organizerId, // Hanya event yang dibuat oleh organizer ini
+                    organizerId,
                 },
                 createdAt: {
-                    gte: startDate, // Tanggal mulai dari rentang waktu
+                    gte: startDate, 
                 },
-                status: "COMPLETED", // Hanya order dengan status "COMPLETED"
+                status: "COMPLETED", 
             },
             orderBy: {
-                createdAt: "asc", // Urutkan berdasarkan tanggal
+                createdAt: "asc", 
             },
         });
 
-        // Format data untuk dikembalikan ke frontend
+        // Query untuk mendapatkan total penjualan tanpa filter waktu
+        const totalSales = await prisma.order.aggregate({
+            _sum: {
+                totalPrice: true,
+            },
+            where: {
+                event: {
+                    organizerId,
+                },
+                status: "COMPLETED",
+            },
+        });
+
+        // Format data untuk response
         const formattedData = salesData.map((item) => ({
-            date: item.createdAt.toISOString().split("T")[0], // Format tanggal
-            totalSales: item._sum.totalPrice || 0,
+            date: item.createdAt.toISOString().split("T")[0], // Format hanya tanggal (tanpa waktu)
+            totalSales: item._sum.totalPrice || 0, // Penjualan untuk setiap tanggal
         }));
 
-        console.log("Time range:", timeRange);
-        console.log("Organizer ID:", organizerId);
-        console.log("Query result:", salesData);
 
         res.status(200).json({
             success: true,
-            data: formattedData,
+            data: formattedData, 
+            totalSales: totalSales._sum.totalPrice || 0, 
         });
     } catch (error) {
         console.error("Error fetching sales data:", error);
