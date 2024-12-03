@@ -10,6 +10,7 @@ import EventForm from "../events/components/editForm";
 
 import debounce from "lodash/debounce";
 import { format } from "date-fns";
+import useAuthStore from "@/stores/auth-stores";
 
 interface Event {
     id: string;
@@ -36,63 +37,66 @@ const EventsFilter: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
+    // Ambil data pengguna dari Zustand store
+    const { user } = useAuthStore(); // Ambil user data dari Zustand
+
+    // Pastikan organizerId tersedia
+    const organizerId = user?.id.toString(); // Pastikan organizerId tersedia (menggunakan user.id)
+
     const fetchEvents = async () => {
-        const response = await axiosInstance.get("/api/dashboard/events");
-        setEvents(response.data.events);
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axiosInstance.get(`/api/dashboard/query`, {
+                params: {
+                    search: debouncedSearchTerm?.trim() || undefined,
+                    filterType: filterType !== "all" ? filterType : undefined,
+                    selectedDate: selectedDate ? format(selectedDate, "yyyy-MM-dd") : undefined,
+                    organizerId: organizerId, // Mengirimkan organizerId
+                },
+            });
+            console.log("All Events:", response.data.events);
+            setEvents(response.data.events);
+        } catch (err) {
+            setError("Terjadi kesalahan.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleDelete = async (id: string) => {
         try {
             await axiosInstance.delete(`/api/dashboard/${id}`);
-
-            fetchEvents(); 
-
-            // window.location.reload(); 
+            fetchEvents();
         } catch (error) {
             console.error("Error deleting event:", error);
         }
     };
-
 
     const handleSearch = debounce((value: string) => {
         setDebouncedSearchTerm(value);
     }, 500);
 
     useEffect(() => {
-
-        handleSearch(searchTerm);
-
+        // Menangani pencarian berdasarkan nama dan lokasi
+        if (searchTerm.trim().length > 0) {
+            handleSearch(searchTerm);
+        } else {
+            setDebouncedSearchTerm(""); // Reset jika pencarian kosong
+        }
 
         return () => {
-            handleSearch.cancel(); 
+            handleSearch.cancel();
         };
-    }, [searchTerm]); 
+    }, [searchTerm]);
 
     useEffect(() => {
-        const fetchEvents = async () => {
-            setLoading(true);
-            setError(null);
-
-            try {
-                const response = await axiosInstance.get(`/api/dashboard/query`, {
-                    params: {
-                        search: debouncedSearchTerm?.trim() || undefined,
-                        filterType: filterType !== "all" ? filterType : undefined,
-                        selectedDate: selectedDate
-                            ? format(selectedDate, "yyyy-MM-dd")
-                            : undefined,
-                    },
-                });
-                setEvents(response.data.events);
-            } catch (err) {
-                setError("Terjadi kesalahan.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchEvents();
-    }, [debouncedSearchTerm, filterType, selectedDate]);
+        // Hanya lakukan fetch jika organizerId ada
+        if (organizerId) {
+            fetchEvents();
+        }
+    }, [debouncedSearchTerm, filterType, selectedDate, organizerId]);
 
     return (
         <div className="p-4">

@@ -6,8 +6,11 @@ import { sub } from "date-fns";
 
 export const getOrganizerEvents = async (req: Request, res: Response) => {
     const { id: organizerId } = req.user as User; // Authenticated organizer ID
+    console.log("Organizer ID from request:", organizerId);  // Log to verify organizerId
 
     try {
+        // Log query just before making the request
+        console.log("Executing prisma query with organizerId: ", organizerId);
         const events = await prisma.event.findMany({
             where: { organizerId },
             select: {
@@ -27,6 +30,9 @@ export const getOrganizerEvents = async (req: Request, res: Response) => {
                 },
             },
         });
+        if (!events || events.length === 0) {
+            console.log("No events found for this organizer.");
+        }
 
         res.status(200).json({ events });
     } catch (error) {

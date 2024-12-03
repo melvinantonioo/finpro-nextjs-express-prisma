@@ -9,33 +9,47 @@ import { parseISO } from 'date-fns';
 
 
 export const getEvents = async (req: Request, res: Response) => {
-    const { search, filterType, selectedDate } = req.query;
+    const { search, filterType, selectedDate, organizerId } = req.query;  // Pastikan ada parameter organizerId
 
     try {
         const query: any = {};
+
+        // Filter berdasarkan pencarian nama event
         if (search && typeof search === "string") {
             query.name = { contains: search, mode: "insensitive" };
         }
+
+        // Filter berdasarkan organizerId
+        if (organizerId && typeof organizerId === "string") {
+            query.organizerId = parseInt(organizerId, 10);  // Mengonversi organizerId menjadi integer
+        }
+
+        // Filter berdasarkan jenis event (upcoming, past)
         if (filterType === "past") {
             query.date = { lt: new Date() };
         } else if (filterType === "upcoming") {
             query.date = { gte: new Date() };
         }
 
+        // Filter berdasarkan tanggal yang dipilih
         if (selectedDate && typeof selectedDate === "string") {
             const localDate = toZonedTime(new Date(selectedDate), "Asia/Jakarta");
             const localStartOfDay = startOfDay(localDate);
             const localEndOfDay = endOfDay(localDate);
 
             query.date = {
-                gte: add(localStartOfDay, { hours: -7 }),
+                gte: add(localStartOfDay, { hours: -7 }),  // Sesuaikan timezone jika perlu
                 lte: add(localEndOfDay, { hours: -7 }),
             };
         }
+
+        // Query ke Prisma dengan filter yang telah diterapkan
         const events = await prisma.event.findMany({
             where: query,
             include: { organizer: true },
         });
+
+        // Kembalikan hasil events
         res.json({ success: true, events });
     } catch (error) {
         console.error("Error fetching events:", error);
