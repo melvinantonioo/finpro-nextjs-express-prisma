@@ -2,9 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../prisma";
 import { User } from "@prisma/client";
 
-/**
- * Controller untuk mendapatkan data penjualan
- */
+
 export const getSalesData = async (req: Request, res: Response) => {
     const organizerId = req.user!.id;
     const { timeRange = "monthly" } = req.query;

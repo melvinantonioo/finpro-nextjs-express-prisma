@@ -30,7 +30,7 @@ export const registerUserReff = async (req: Request, res: Response) => {
     const { name, email, password, role, referralCode } = req.body;
 
     try {
-        // Cek apakah email sudah terdaftar
+        
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             res.status(400).json({ message: 'Email sudah terdaftar' });
