@@ -10,7 +10,7 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-//1bFrLyy8wjCMWBxC
+
 
 model sample {
   id        Int      @id @default(autoincrement())
