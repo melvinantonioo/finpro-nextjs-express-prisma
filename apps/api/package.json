@@ -9,7 +9,8 @@
     "serve": "cross-env NODE_ENV=production node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma": "npx prisma",
-    "seed": "ts-node ./src/seed.ts"
+    "seed": "ts-node ./src/seed.ts",
+    "postinstall": "if [ \"$VERCEL\" != \"1\" ]; then husky install; fi"
   },
   "author": "",
   "license": "ISC",
